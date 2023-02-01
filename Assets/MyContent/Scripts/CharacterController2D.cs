@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils;
 
 public class CharacterController2D : MonoBehaviour {
     [SerializeField] private float m_JumpForce = 400f; // Amount of force added when the player jumps.
@@ -11,8 +12,11 @@ public class CharacterController2D : MonoBehaviour {
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f; // How much to smooth out the movement
     [SerializeField] private bool m_AirControl = false; // Whether or not a player can steer while jumping;
     [SerializeField] private LayerMask m_WhatIsGround; // A mask determining what is ground to the character
+    [SerializeField] private LayerMask m_WhatIsPlatform; // A mask determining what is ground to the character
+    [SerializeField] private LayerMask m_WhatIsSticky; // A mask determining what is ground to the character
     [SerializeField] private Transform m_GroundCheck; // A position marking where to check if the player is grounded.
     [SerializeField] private Transform m_CeilingCheck; // A position marking where to check for ceilings
+    [SerializeField] private Transform m_FrontCheck; // A position marking where to check for front movement is blocked
     [SerializeField] private Collider2D m_CrouchDisableCollider; // A collider that will be disabled when crouching
 
     const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
@@ -54,7 +58,6 @@ public class CharacterController2D : MonoBehaviour {
         // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
         // This can be done using layers instead but Sample Assets will not overwrite your project settings.
         var colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-        Debug.Log(colliders.Length);
         for (var i = 0; i < colliders.Length; i++) {
             if (colliders[i].gameObject == gameObject) continue;
             m_Grounded = true;
@@ -102,6 +105,13 @@ public class CharacterController2D : MonoBehaviour {
                 }
             }
 
+            //Prevent movement if front is blocked
+            var invert = m_FacingRight ? 1 : -1;
+            var currentMovement = Math.Abs((int) Math.Ceiling(move) + invert);
+            if (Physics2D.OverlapCircle(m_FrontCheck.position, k_GroundedRadius, m_WhatIsGround) && currentMovement == 2) {
+                move = 0;
+            }
+            
             // Move the character by finding the target velocity
             Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
             // And then smoothing it out and applying it to the character
@@ -128,6 +138,32 @@ public class CharacterController2D : MonoBehaviour {
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision) {
+        
+        // TODO: Check this with ground check
+        if (!LayerMaskExtensions.IsInLayerMask(collision.gameObject.layer, m_WhatIsPlatform)) {
+            return;
+        }
+
+        transform.SetParent(collision.transform);
+    }
+    
+    private void OnCollisionStay2D(Collision2D collision) {
+        
+        // TODO: Check this with front check
+        
+    }
+
+    private void OnCollisionExit2D(Collision2D collision) {
+        
+        // TODO: Check this with ground check
+        if (!LayerMaskExtensions.IsInLayerMask(collision.gameObject.layer, m_WhatIsPlatform)) {
+            return;
+        }
+        
+        transform.SetParent(null);
+    }
+
 
     private void Flip() {
         // Switch the way the player is labelled as facing.
@@ -143,5 +179,7 @@ public class CharacterController2D : MonoBehaviour {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(m_GroundCheck.position, k_GroundedRadius);
         Gizmos.DrawWireSphere(m_CeilingCheck.position, k_CeilingRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(m_FrontCheck.position, k_CeilingRadius);
     }
 }

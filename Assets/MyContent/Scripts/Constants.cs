@@ -8,4 +8,9 @@ namespace Constants {
         public const string ANIMATOR_IS_JUMPING = "IsJumping";
         public const string ANIMATOR_IS_CROUCHING = "IsCrouching";
     }
+    
+    public static class GameSettings
+    {
+        public const float GRAVITY = -9.81f;
+    }
 }

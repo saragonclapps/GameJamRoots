@@ -232,7 +232,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 351238542}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00000047683716, y: 2.39, z: -10}
+  m_LocalPosition: {x: -0.00000071525574, y: 2.39, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -455,7 +455,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1524594491}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00000047683716, y: 2.39, z: -10}
+  m_LocalPosition: {x: -0.00000071525574, y: 2.39, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -511,8 +511,8 @@ GameObject:
   - component: {fileID: 2112106104}
   - component: {fileID: 2112106103}
   - component: {fileID: 2112106101}
-  - component: {fileID: 2112106100}
   - component: {fileID: 2112106102}
+  - component: {fileID: 2112106105}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -673,21 +673,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.63, y: 0.82619077}
   m_EdgeRadius: 0
---- !u!114 &2112106100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2112106090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5273cd41ac3c5246965ef9469d10dd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 2112106101}
-  animator: {fileID: 2112106092}
-  runSpeed: 40
 --- !u!114 &2112106101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -700,7 +685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11bcb7c6157d84e25a69f2a3a90a506e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 700
+  m_JumpForce: 1200
   m_CrouchSpeed: 0.36
   m_MovementSmoothing: 0.05
   m_AirControl: 1
@@ -720,8 +705,8 @@ MonoBehaviour:
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2112106100}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+      - m_Target: {fileID: 2112106105}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
         m_MethodName: OnLanding
         m_Mode: 1
         m_Arguments:
@@ -735,17 +720,17 @@ MonoBehaviour:
   OnCrouchEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2112106100}
-        m_TargetAssemblyTypeName: PlayerMovement, Assembly-CSharp
+      - m_Target: {fileID: 2112106105}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
         m_MethodName: OnCrouching
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &2112106102
 MonoBehaviour:
@@ -911,3 +896,18 @@ DistanceJoint2D:
   m_AutoConfigureDistance: 1
   m_Distance: 2.39
   m_MaxDistanceOnly: 0
+--- !u!114 &2112106105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112106090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604fc3f57e6440ed8c25338332defe12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterController2D: {fileID: 2112106101}
+  animator: {fileID: 2112106092}
+  runSpeed: 40

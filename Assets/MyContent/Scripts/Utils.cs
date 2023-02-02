@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-namespace Utils
-{
-    public static class Rand
-    {
+namespace Utils {
+    public static class Rand {
         private static System.Random _rnd = new System.Random();
-        public static float uniform
-        {
+
+        public static float uniform {
             //Skip the rounding to 1.0 of the floats (0, 8388606) / 8388607f).
             get { return ((float)_rnd.Next(0, 8388606) / 8388607f); }
         }
@@ -21,45 +19,42 @@ namespace Utils
             return uniform * (maxValue - minValue);
         };
     }
-    
-    public static class LayerMaskExtensions
-    {
-        public static bool IsInLayerMask(int layer, LayerMask layermask)
-        {
+
+    public static class LayerMaskExtensions {
+        public static bool IsInLayerMask(int layer, LayerMask layermask) {
             return layermask == (layermask | (1 << layer));
         }
     }
+    
+    public static class Empty {
+        public static void EmptyMethod() { }
+        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable) {
+            return enumerable == null || !enumerable.Any();
+        }
+    }
 
-    public static class ParserData
-    {
-        public static int ConvertStringToInt(string intString)
-        {
+    public static class ParserData {
+        public static int ConvertStringToInt(string intString) {
             int i = 0;
             return (Int32.TryParse(intString, out i) ? i : -1);
         }
     }
-    
-    public static class RectTransformExtensions
-    {
-        public static void SetLeft(this RectTransform rt, float left)
-        {
+
+    public static class RectTransformExtensions {
+        public static void SetLeft(this RectTransform rt, float left) {
             rt.offsetMin = new Vector2(left, rt.offsetMin.y);
         }
- 
-        public static void SetRight(this RectTransform rt, float right)
-        {
+
+        public static void SetRight(this RectTransform rt, float right) {
             rt.offsetMax = new Vector2(-right, rt.offsetMax.y);
         }
- 
-        public static void SetTop(this RectTransform rt, float top)
-        {
+
+        public static void SetTop(this RectTransform rt, float top) {
             rt.offsetMax = new Vector2(rt.offsetMax.x, -top);
         }
- 
-        public static void SetBottom(this RectTransform rt, float bottom)
-        {
+
+        public static void SetBottom(this RectTransform rt, float bottom) {
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
         }
-        
     }
 }

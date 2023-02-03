@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FP;
 using UnityEngine;
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour {
 
     public float runSpeed = 40f;
     public float horizontalMove { get; set; }
+    public float horizontalMoveToAdd { get; set; }
     public bool jump { get; set; }
     public bool crouch { get; set; }
 
@@ -133,18 +135,27 @@ public class Player : MonoBehaviour {
     }
 
     private void Execute() {
+        if (!enabled) return;
+
         _fsm.Update();
 #if UNITY_EDITOR
-        Logger.Debug.LogColor("Player state: " + _fsm.current.name, "red");
+        // Logger.Debug.LogColor("Player state: " + _fsm.current.name, "red");
 #endif
     }
 
     private void ExecuteFixed() {
-        characterController2D.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+        // Debug.Log("ExecuteFixed: " + horizontalMoveToAdd);
+        characterController2D.Move(
+            horizontalMove * Time.fixedDeltaTime, 
+            horizontalMoveToAdd * Time.fixedDeltaTime, 
+            crouch, 
+            jump
+        );
     }
 
     public void OnLanding() {
         _fsm.Feed(PlayerStates.IDLE);
+        horizontalMoveToAdd = 0;
     }
 
     public void OnCrouching() {

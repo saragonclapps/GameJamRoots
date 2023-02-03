@@ -28,6 +28,8 @@ public class CharacterController2D : MonoBehaviour {
     private bool m_FacingRight = true; // For determining which way the player is currently facing.
     private Vector3 m_Velocity = Vector3.zero;
     private Vector2 _gravityVelocity;
+    public bool hasCustomGravity = true;
+    // private bool _isSticky;
 
     [Header("Events")] [Space] public UnityEvent OnLandEvent;
 
@@ -55,14 +57,14 @@ public class CharacterController2D : MonoBehaviour {
     }
 
     private void ExecuteFixed() {
-        bool wasGrounded = m_Grounded;
+        var wasGrounded = m_Grounded;
         m_Grounded = false;
 
         // The player is grounded if a circlecast to the groundcheck position hits anything designated as ground
         // This can be done using layers instead but Sample Assets will not overwrite your project settings.
         var colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
-        for (var i = 0; i < colliders.Length; i++) {
-            if (colliders[i].gameObject == gameObject) continue;
+        foreach (var t in colliders) {
+            if (t.gameObject == gameObject) continue;
             m_Grounded = true;
             
             if (!wasGrounded) {
@@ -72,7 +74,8 @@ public class CharacterController2D : MonoBehaviour {
     }
 
 
-    public void Move(float move, bool crouch, bool jump) {
+    public void Move(float move, float moveToAdd, bool crouch, bool jump) {
+        move += moveToAdd;
         // If crouching, check to see if the character can stand up
         if (!crouch) {
             // If the character has a ceiling preventing them from standing up, keep them crouching
@@ -132,8 +135,11 @@ public class CharacterController2D : MonoBehaviour {
                 Flip();
             }
             
-            _gravityVelocity.y = GameSettings.GRAVITY * Time.deltaTime * 3;
-            m_Rigidbody2D.velocity += _gravityVelocity;
+            if (hasCustomGravity) {
+                // Apply gravity
+                _gravityVelocity.y = GameSettings.GRAVITY * Time.deltaTime * 3;
+                m_Rigidbody2D.velocity += _gravityVelocity;
+            }
         }
 
         // If the player should jump...
@@ -173,7 +179,7 @@ public class CharacterController2D : MonoBehaviour {
         m_FacingRight = !m_FacingRight;
 
         // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
+        var theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
     }

@@ -73,8 +73,14 @@ public class GrapplingGun : MonoBehaviour {
     // Initial angular velocity
     [SerializeField]
     private float _initialAngularVelocity = 3;
+    [SerializeField] 
+    private float _speedDistanceMovePendulum = 30;
+    [SerializeField]
+    private float _minDistancePendulum = 3;
     [SerializeField]
     private float _maxDistancePendulum = 5;
+    private float _currentDistancePedulum =  5;
+    
     [SerializeField]
     private float _speedToMoveAngularVelocity = 1;
     [SerializeField]
@@ -84,6 +90,7 @@ public class GrapplingGun : MonoBehaviour {
     private float _nextValueAngular;
     private float _angularVelocity; 
     private float _nextAngularVelocity;
+
     
     [HideInInspector] 
     public Vector2 grapplePoint;
@@ -132,7 +139,7 @@ public class GrapplingGun : MonoBehaviour {
 
             if (!launchToPoint || !grappleRope.isGrappling) return;
             PendulumMovementInGrapple();
-
+            VerticalPendulumMovement();
 
             if (launchType != LaunchType.TRANSFORM_LAUNCH) return;
             Vector2 firePointDistance = firePoint.position - gunHolder.localPosition;
@@ -157,15 +164,32 @@ public class GrapplingGun : MonoBehaviour {
         }
     }
 
+
+
     #region Pendulum
+    private void VerticalPendulumMovement() {
+        if (!_isPendulum || _player.playerController.verticalMove == 0) return;
+        
+        if (_player.playerController.verticalMove > 0 && _minDistancePendulum <= _currentDistancePedulum) {
+#if UNITY_EDITOR
+            // Logger.Debug.LogColor(_currentDistancePedulum, "red");
+#endif
+            _currentDistancePedulum -= _speedDistanceMovePendulum * Time.deltaTime;
+        }else if (_player.playerController.verticalMove < 0 && _maxDistancePendulum >= _currentDistancePedulum) {
+#if UNITY_EDITOR
+            // Logger.Debug.LogColor(_currentDistancePedulum, "green");
+#endif
+            _currentDistancePedulum += _speedDistanceMovePendulum * Time.deltaTime;
+        }
+    }
+    
     private void PendulumMovementInGrapple() {
-        var distance = Vector2.Distance(grapplePoint, transform.position);
-        if (!_isPendulum || !(distance < _maxDistancePendulum)) return;
-        var distanceToEvaluate = _maxDistancePendulum - 0.1f;
+        var currentDistance = Vector2.Distance(grapplePoint, transform.position);
+        if (!_isPendulum || !(currentDistance <= _maxDistancePendulum)) return;
         m_springJoint2D.enabled = false;
         
-        EulerCromer(distanceToEvaluate);
-        PolarToCartesian(distanceToEvaluate);
+        EulerCromer(_currentDistancePedulum);
+        PolarToCartesian(_currentDistancePedulum);
     }
     
     private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
@@ -251,6 +275,7 @@ public class GrapplingGun : MonoBehaviour {
     }
 
     private void LaunchByType() {
+        _currentDistancePedulum = _maxDistancePendulum;
         switch (launchType) {
             case LaunchType.PHYSICS_LAUNCH:
                 m_springJoint2D.connectedAnchor = grapplePoint;

@@ -851,7 +851,7 @@ MonoBehaviour:
   grappleToAll: 0
   m_WhatIsHooking:
     serializedVersion: 2
-    m_Bits: 6656
+    m_Bits: 4096
   hookingRadius: 0.01
   m_camera: {fileID: 351238544}
   gunHolder: {fileID: 2112106097}
@@ -870,10 +870,13 @@ MonoBehaviour:
   targetDistance: 3
   targetFrequency: 2
   _isPendulum: 1
-  _initialValueAngular: 0.483
+  _initialValueAngular: 0.799
   _initialAngularVelocity: 4
+  _speedDistanceMovePendulum: 30
+  _minDistancePendulum: 3
   _maxDistancePendulum: 5
   _speedToMoveAngularVelocity: 40
+  _pendulumImpulse: {x: 300, y: 50}
   grapplePoint: {x: 0, y: 0}
   grappleDistanceVector: {x: 0, y: 0}
 --- !u!212 &2054092304
